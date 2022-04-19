@@ -1,0 +1,7 @@
+{
+  "defaultSeverity": "debug",
+  "extends": ["tslint:recommended"],
+  "jsRules": {},
+  "rules": { "no-console": false },
+  "rulesDirectory": []
+}
