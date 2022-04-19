@@ -171,6 +171,8 @@ export function Presence() {
     });
   }, []);
 
+  const RetypedProvider: any = DailyProvider;
+
   return (
     <div
       className={`h-screen w-screen overflow-scroll`}
@@ -184,11 +186,11 @@ export function Presence() {
 
       <div className="absolute top-0 left-0">
         {showCall ? (
-          <DailyProvider callObject={callObject!}>
+          <RetypedProvider callObject={callObject!}>
             <CallObjectContext.Provider value={callObject}>
               <Call roomUrl={roomUrl!} />
             </CallObjectContext.Provider>
-          </DailyProvider>
+          </RetypedProvider>
         ) : (
           <div className="bg-white w-screen">
             {/* <StartButton
