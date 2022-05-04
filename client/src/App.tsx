@@ -4,6 +4,7 @@ import { Live } from "./components/Live";
 import { Landing } from "./components/Landing";
 
 function App() {
+  console.log("in app");
   return (
     <div className="App">
       <Router>

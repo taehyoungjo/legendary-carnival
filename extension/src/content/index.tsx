@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Runtime, runtime } from "webextension-polyfill";
 
+let rendered = false;
+
 const cleanup = (container: HTMLDivElement) => () => {
   ReactDOM.unmountComponentAtNode(container);
   container.remove();
@@ -26,14 +28,18 @@ const listener = (message: any, _: Runtime.MessageSender) => {
   const { type, payload } = message;
   console.log("Received message", type, payload);
 
-  renderContainer((container, cleanup) => {
-    renderReact(
-      container,
-      <React.StrictMode>
-        <div></div>
-      </React.StrictMode>
-    );
-  });
+  if (!rendered) {
+    renderContainer((container, cleanup) => {
+      renderReact(
+        container,
+        <React.StrictMode>
+          <div>Test</div>
+        </React.StrictMode>
+      );
+    });
+  }
+
+  rendered = true;
 };
 
 runtime.onMessage.addListener(listener);
