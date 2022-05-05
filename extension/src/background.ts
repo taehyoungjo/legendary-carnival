@@ -1,7 +1,19 @@
-import { runtime, tabs, webRequest, WebRequest } from "webextension-polyfill";
+import {
+  runtime,
+  Runtime,
+  tabs,
+  webRequest,
+  WebRequest,
+  storage,
+} from "webextension-polyfill";
 
-const prefix = "https://legendary-carnival.vercel.app/";
-// const prefix = "http://localhost:3000/";
+// const prefix = "https://legendary-carnival.vercel.app/";
+const prefix = "http://localhost:3000/";
+const liveblocks = "https://liveblocks.io/api/";
+const daily = "https://c.daily.co/";
+const dailyTwo = "https://gs.daily.co/";
+
+let enabled = false;
 
 runtime.onInstalled.addListener(() => {
   console.log("Extension installed");
@@ -34,19 +46,64 @@ function createFilter(): WebRequest.RequestFilter {
 
 const filters = createFilter();
 
+storage.onChanged.addListener(async (changes, _) => {
+  if (changes.enabled) {
+    enabled = changes.enabled.newValue === "true" ? true : false;
+
+    const tabsArr = await tabs.query({ active: true });
+    if (tabsArr.length > 0 && enabled === true) {
+      const tab = tabsArr[0];
+
+      if (!tab.url) {
+        return;
+      }
+
+      if (tab.url.startsWith(prefix)) {
+        return;
+      }
+
+      tabs.create({
+        url: prefix + "room/?url=" + tab.url,
+      });
+    }
+  }
+});
+
+const runtimeListener = async (
+  message: {
+    type: string;
+    payload: any;
+  },
+  _: Runtime.MessageSender
+) => {
+  const { type, payload } = message;
+  switch (type) {
+    case "toggle":
+      console.log("toggle", payload);
+      break;
+    default:
+      return;
+  }
+};
+
+runtime.onMessage.addListener(runtimeListener);
+
 webRequest.onBeforeRequest.addListener(
   (details) => {
-    if (details.url.startsWith(prefix) || details.frameId !== 0) {
-      // return { cancel: false };
-      console.log(
-        "cancelling",
-        details.url.startsWith(prefix),
-        details.frameId !== 0
-      );
+    if (enabled === false) {
       return;
     }
 
-    console.log("redirecting", details.url);
+    if (
+      details.url.startsWith(prefix) ||
+      details.url.startsWith(liveblocks) ||
+      details.url.startsWith(daily) ||
+      details.url.startsWith(dailyTwo) ||
+      details.frameId !== 0
+    ) {
+      return;
+    }
+
     return {
       redirectUrl: prefix + "room/?url=" + details.url,
     };

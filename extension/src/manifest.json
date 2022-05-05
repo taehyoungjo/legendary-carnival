@@ -7,7 +7,13 @@
     "scripts": ["background.ts"],
     "persistent": true
   },
-  "permissions": ["tabs", "webRequest", "webRequestBlocking", "*://*/*"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "*://*/*"
+  ],
   "browser_action": {
     "default_icon": "icons/128.png",
     "default_popup": "popup/index.html"

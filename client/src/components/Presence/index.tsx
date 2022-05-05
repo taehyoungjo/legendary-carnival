@@ -61,7 +61,6 @@ export function Presence() {
       .createRoom()
       .then((room) => room.url)
       .catch((error) => {
-        console.log("error creating room", error);
         setRoomUrl(null);
         setAppState(STATE_IDLE);
       });
@@ -69,6 +68,7 @@ export function Presence() {
 
   const startJoiningCall = useCallback((url: string) => {
     const newCallObject = DailyIframe.createCallObject();
+
     setRoomUrl(url);
     setCallObject(newCallObject);
     setAppState(STATE_JOINING);
@@ -165,7 +165,6 @@ export function Presence() {
   useEffect(() => {
     createCall().then((url) => {
       if (url) {
-        console.log("starting to join call");
         startJoiningCall(url);
       }
     });
